@@ -12,9 +12,9 @@ func main() {
 		})
 	})
 
-	r.POST("/cloud-storage-bucket", uploadFileHandler)
+	r.POST("/cloud-storage-bucket", UploadFileHandler)
 
-	r.GET("/cloud-secrets-manager", viewSecretsHandler)
+	r.GET("/cloud-secrets-manager", ViewSecretsHandler)
 
 	r.GET("/healthz", func(c *gin.Context) { 
 		c.JSON(200, gin.H{

@@ -6,21 +6,20 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"fmt"
 
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
-	secretmanager "cloud.google.com/go/secretmanager/apiv1"
-	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
+	sm "cloud.google.com/go/secretmanager/apiv1"
+	pb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
 
 var (
 	storageClient *storage.Client
-	secretClient *secretmanager.Client
 )
 
-
 // Uploads file to bucket
-func uploadFileHandler(c *gin.Context) {
+func UploadFileHandler(c *gin.Context) {
 	bucket := os.Getenv("BUCKET_NAME")
 
 	var err error
@@ -80,14 +79,14 @@ func uploadFileHandler(c *gin.Context) {
 	})
 }
 
-func viewSecretsHandler(c *gin.Context) {
-	// Grab Secret name from request
-	// secret := c.Params.ByName("name")
-	secret := "projects/312654790392/secrets/super-secure-secret/versions/1"
-	// Create the client.
+// Get Secret
+func ViewSecretsHandler(c *gin.Context) {
+	projectId := os.Getenv("PROJECT_ID")
+	secretName := os.Getenv("SECRET_NAME")
+
 	ctx := context.Background()
 
-	secretClient, err := secretmanager.NewClient(ctx)
+	secretClient, err := sm.NewClient(ctx)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -97,12 +96,12 @@ func viewSecretsHandler(c *gin.Context) {
 	}
 
 	// Build the request.
-	req := &secretmanagerpb.AccessSecretVersionRequest{
-			Name: secret,
+	req := pb.AccessSecretVersionRequest{
+		Name: fmt.Sprintf("projects/%v/secrets/%v/versions/latest", projectId, secretName),
 	}
 
 	// Call the API.
-	result, err := secretClient.AccessSecretVersion(ctx, req)
+	result, err := secretClient.AccessSecretVersion(ctx, &req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -111,11 +110,8 @@ func viewSecretsHandler(c *gin.Context) {
 		return
 	}
 
-	// WARNING: Do not print the secret in a production environment - this snippet
-	// is showing how to access the secret material.
+	// Get Secret value and return
 	c.JSON(http.StatusOK, gin.H{
-		// "message":  "file uploaded successfully",
-		"message":  "secret retrieved successfully",
-		"secret value": result.Payload.Data,
+		"message":  result.Payload,
 	})
 }
