@@ -3,6 +3,6 @@ This app is used in the [gke-poc-toolkit](https://github.com/GoogleCloudPlatform
 
 This app is a very simple GCP storage file uploader written in go and leverages an extra dope gin framework.
 
-## Usage
+## How to use the api
 Call the api and pass in a file.
 `curl -F "file=@./test" http://localhost:8080/cloud-storage-bucket`
