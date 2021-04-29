@@ -82,8 +82,8 @@ func uploadFileHandler(c *gin.Context) {
 
 func viewSecretsHandler(c *gin.Context) {
 	// Grab Secret name from request
-	secret := c.Params.ByName("name")
-
+	// secret := c.Params.ByName("name")
+	secret := "projects/312654790392/secrets/super-secure-secret/versions/1"
 	// Create the client.
 	ctx := context.Background()
 

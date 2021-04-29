@@ -14,7 +14,7 @@ func main() {
 
 	r.POST("/cloud-storage-bucket", uploadFileHandler)
 
-	r.GET("/cloud-secrets-manager/:name", viewSecretsHandler)
+	r.GET("/cloud-secrets-manager", viewSecretsHandler)
 
 	r.GET("/healthz", func(c *gin.Context) { 
 		c.JSON(200, gin.H{
