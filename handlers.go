@@ -112,6 +112,6 @@ func ViewSecretsHandler(c *gin.Context) {
 
 	// Get Secret value and return
 	c.JSON(http.StatusOK, gin.H{
-		"message":  result.Payload,
+		"message":  result.Payload.Data,
 	})
 }
